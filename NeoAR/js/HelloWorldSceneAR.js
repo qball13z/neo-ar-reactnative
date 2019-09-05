@@ -36,10 +36,10 @@ var HelloWorldSceneAR = createReactClass({
         
         <ViroARImageMarker target={"targetOne"} onAnchorFound={this._onAnchorFound} >
             <Viro3DObject
-            source={require('./res/wwt.obj')}
+            source={require('./res/wwt_logo/wwt.obj')}
             position={[0, 0, 0]}
             scale={[0, 0, 0]}
-            rotation={[-90, 0, 0]}
+            rotation={[0, 0, 0]}
             animation={{name:"scaleUp", run:this.state.playAnim}}
             type="OBJ" />
             </ViroARImageMarker>
@@ -74,8 +74,8 @@ ViroARTrackingTargets.createTargets({
 });
 
 ViroAnimations.registerAnimations({
-  scaleUp:{properties:{scaleX:0.06, scaleY:0.06, scaleZ:0.06,},
-                duration: 1500, easing: "bounce"}
+  scaleUp:{properties:{scaleX:0.4, scaleY:0.4, scaleZ:0.4,},
+                duration: 2000, easing: "bounce"}
 });
 
 module.exports = HelloWorldSceneAR;
