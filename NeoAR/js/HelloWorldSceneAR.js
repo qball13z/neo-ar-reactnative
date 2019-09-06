@@ -32,22 +32,25 @@ var HelloWorldSceneAR = createReactClass({
     return (
       <ViroARScene>
         <ViroAmbientLight color={"#aaaaaa"} />
-        <ViroSpotLight innerAngle={5} outerAngle={90} direction={[0, -1, -.2]} position={[0, 3, 1]} color="#ffffff" castsShadow={true} />
-        
+        <ViroSpotLight innerAngle={5} outerAngle={90} direction={[0, -1, -.2]} position={[0, 3, 1]} color="#ffffff" castsShadow={true} />               
         <ViroARImageMarker target={"targetOne"} onAnchorFound={this._onAnchorFound} >
-            <Viro3DObject
-            source={require('./res/wwt_logo/wwt.obj')}
-            position={[0, 0, 0]}
-            scale={[0, 0, 0]}
-            rotation={[0, 0, 0]}
-            animation={{name:"scaleUp", run:this.state.playAnim}}
-            type="OBJ" />
+        <Viro3DObject
+              source={require('./res/wwt_logo/wwt.vrx')}
+              position={[0, 0, 0]}
+              scale={[0, 0, 0]}
+              rotation={[0, 0, 0]}
+              lightReceivingBitMask={3}
+              shadowCastingBitMask={2}
+              animation={{name:"scaleUp", run:this.state.playAnim}}
+              highAccuracyEvents={true}
+              type="VRX" />
             </ViroARImageMarker>
       </ViroARScene>
     );
   },
 
   _onAnchorFound() {
+    console.log("######## FOUND ANCHOR! ");
     this.setState({
       animateLogo: true,
       playAnim: true,
@@ -65,17 +68,29 @@ var HelloWorldSceneAR = createReactClass({
   }
 });
 
+export function createImageTarget(name, source_uri) {
+  let targetName = name;
+  let targets= {};
+  targets[targetName] = {
+    source: source_uri,
+    orientation: "Up",
+   physicalWidth: 5,
+  }
+
+  ViroARTrackingTargets.createTargets(targets);
+}
+
 ViroARTrackingTargets.createTargets({
   "targetOne" : {
-    source : require('./res/wwt.jpg'),
+    source : require('./res/logo.png'),
     orientation : "Up",
     physicalWidth : 0.1 // real world width in meters
   },
 });
 
 ViroAnimations.registerAnimations({
-  scaleUp:{properties:{scaleX:0.4, scaleY:0.4, scaleZ:0.4,},
-                duration: 2000, easing: "bounce"}
+  scaleUp:{properties:{scaleX:0.01, scaleY:0.01, scaleZ:0.01,},
+                duration: 3000, easing: "bounce"}
 });
 
 module.exports = HelloWorldSceneAR;
