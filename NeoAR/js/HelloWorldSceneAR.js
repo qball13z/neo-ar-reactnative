@@ -1,7 +1,6 @@
 'use strict';
 
 import React, { Component } from 'react';
-import {StyleSheet} from 'react-native';
 
 import {
   ViroARScene,
@@ -19,8 +18,7 @@ var createReactClass = require('create-react-class');
 var HelloWorldSceneAR = createReactClass({
   getInitialState: function() {
     return {
-      loopState:false,
-      animationName:"01",
+      currentAnim:"scaleUp",
       pauseUpdates : false,
       playAnim: false,
       modelAnim: false,
@@ -41,7 +39,8 @@ var HelloWorldSceneAR = createReactClass({
               rotation={[0, 0, 0]}
               lightReceivingBitMask={3}
               shadowCastingBitMask={2}
-              animation={{name:"scaleUp", run:this.state.playAnim}}
+              animation={{name:this.state.currentAnim, run:this.state.playAnim, loop: this.state.animateLogo}}
+              onClick={this._switchAnimation}
               highAccuracyEvents={true}
               type="VRX" />
             </ViroARImageMarker>
@@ -52,10 +51,32 @@ var HelloWorldSceneAR = createReactClass({
   _onAnchorFound() {
     console.log("######## FOUND ANCHOR! ");
     this.setState({
-      animateLogo: true,
+      animateLogo: false,
       playAnim: true,
+      currentAnim: "scaleUp"
     });
   },
+
+  _switchAnimation() {
+    if(this.state.currentAnim == "scaleUp") {
+      this.setState({
+        playAnim: true,
+        currentAnim: "rotate",
+        animateLogo: true
+      });
+    } else {
+      this.setState({
+        playAnim: !this.state.playAnim,
+      });
+    }
+ },   
+
+  _onAnimationFinished(){
+    ViroAnimations.registerAnimations({
+      rotate:{properties:{rotateZ:"+=45"}, duration: 3000, easing: "bounce"},
+      scaleUp:{properties:{positionY: "+=0.3", scaleX:0.01, scaleY:0.01, scaleZ:0.01, rotateX:"+=90"}, duration: 3000, easing: "bounce"},
+    });
+},
 
   _onInitialized(state, reason) {
     if (state == ViroConstants.TRACKING_NORMAL) {
@@ -82,15 +103,15 @@ export function createImageTarget(name, source_uri) {
 
 ViroARTrackingTargets.createTargets({
   "targetOne" : {
-    source : require('./res/logo.png'),
+    source : require('./res/wwt.jpg'),
     orientation : "Up",
     physicalWidth : 0.1 // real world width in meters
   },
 });
 
 ViroAnimations.registerAnimations({
-  scaleUp:{properties:{scaleX:0.01, scaleY:0.01, scaleZ:0.01,},
-                duration: 3000, easing: "bounce"}
+  scaleUp:{properties:{positionY: "+=0.3", scaleX:0.01, scaleY:0.01, scaleZ:0.01, rotateX:"+=90"}, duration: 3000, easing: "bounce"},
+  rotate:{properties:{rotateY:"+=360"}, duration:2000},
 });
 
 module.exports = HelloWorldSceneAR;
